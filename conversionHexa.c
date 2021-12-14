@@ -1,21 +1,20 @@
 #include "conversionHexa.h"
 
-void charFileToHexaFile(char fichierIN[], char fichierOUT[]);
+unsigned PWR2[32]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432,67108864,134217728,268435456,536870912,1073741824,2147483648};
 
-int main(int argc, char* argv[]) {
+/* int main(int argc, char* argv[]) {
     if (argc==3) {
         charFileToHexaFile(argv[1],argv[2]);
     } else {printf("error");}
     return(0);
 }
-
+ */
 
 int lireFichier(char nomFichier[], progIN* pgm) {
     // lit le fichier "nomFichier" et l'écrit sous forme de tableau de chaînes de caractères dans pgm.
     FILE * fichier;
     fichier=fopen(nomFichier,"r");
     int n=0;
-    char line[64];
     while (!feof(fichier)) {
         fscanf(fichier, "%[^\n]\n",&((*pgm).line[n]));
         if ((*pgm).line[n][0]!='#') {n++;}
@@ -125,89 +124,87 @@ int hash(char op[9]) {
 
 int instrToHexa(instruction* I) { // fonctionne pas avec les entiers négatifs
     // traduit une instruction en entier correspondant à sa forme hexadécimale / binaire
-
-    unsigned pwr2[32]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432,67108864,134217728,268435456,536870912,1073741824,2147483648};
     unsigned n;
     if (nbArgs(I)==4) { //instructions avec 4 arguments (en comptant l'op code)
         switch (hash((*I).args[0])) {
             case 2106: //ADD (special)
-                n=32+pwr2[11]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+pwr2[16]*argToInt((*I).args[3]);
+                n=32+PWR2[11]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+PWR2[16]*argToInt((*I).args[3]);
                 break;
             case 142714: //ADDI
-                n=pwr2[29]+pwr2[16]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+argToInt((*I).args[3]);
+                n=PWR2[29]+PWR2[16]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+argToInt((*I).args[3]);
                 break;
             case 2366: //AND (special)
-                n=36+pwr2[11]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+pwr2[16]*argToInt((*I).args[3]);
+                n=36+PWR2[11]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+PWR2[16]*argToInt((*I).args[3]);
                 break;
             case 10921: //BEQ
-                n=pwr2[28]+pwr2[21]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2])+argToInt((*I).args[3]);
+                n=PWR2[28]+PWR2[21]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2])+argToInt((*I).args[3]);
                 break;
             case 3043: //BNE
-                n=5*pwr2[26]+pwr2[21]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2])+argToInt((*I).args[3]);
+                n=5*PWR2[26]+PWR2[21]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2])+argToInt((*I).args[3]);
                 break;
             case 583: //LW
-                n=35*pwr2[26]+pwr2[16]*argToInt((*I).args[1])+argToInt((*I).args[2])+pwr2[21]*argToInt((*I).args[3]);
+                n=35*PWR2[26]+PWR2[16]*argToInt((*I).args[1])+argToInt((*I).args[2])+PWR2[21]*argToInt((*I).args[3]);
                 break;
             case 456: //OR (special)
-                n=37+pwr2[11]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+pwr2[16]*argToInt((*I).args[3]);
+                n=37+PWR2[11]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+PWR2[16]*argToInt((*I).args[3]);
                 break;
             case 312017: //ROTR (special)
-                n=2+pwr2[21]+pwr2[11]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2])+pwr2[6]*argToInt((*I).args[3]);
+                n=2+PWR2[21]+PWR2[11]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2])+PWR2[6]*argToInt((*I).args[3]);
                 break;
             case 7740: //SLL (special)
-                n=pwr2[11]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2])+pwr2[6]*argToInt((*I).args[3]);
+                n=PWR2[11]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2])+PWR2[6]*argToInt((*I).args[3]);
                 break;
             case 13148: //SLT (special)
-                n=42+pwr2[11]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+pwr2[16]*argToInt((*I).args[3]);
+                n=42+PWR2[11]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+PWR2[16]*argToInt((*I).args[3]);
                 break;
             case 7896: //SRL (special)
-                n=2+pwr2[11]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2])+pwr2[6]*argToInt((*I).args[3]);
+                n=2+PWR2[11]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2])+PWR2[6]*argToInt((*I).args[3]);
                 break;
             case 1214: //SUB (special)
-                n=34+pwr2[11]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+pwr2[16]*argToInt((*I).args[3]);
+                n=34+PWR2[11]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+PWR2[16]*argToInt((*I).args[3]);
                 break;
             case 590: //SW
-                n=43*pwr2[26]+pwr2[16]*argToInt((*I).args[1])+argToInt((*I).args[2])+pwr2[21]*argToInt((*I).args[3]);
+                n=43*PWR2[26]+PWR2[16]*argToInt((*I).args[1])+argToInt((*I).args[2])+PWR2[21]*argToInt((*I).args[3]);
                 break;
             case 11879: //XOR (special)
-                n=38+pwr2[11]*argToInt((*I).args[1])+pwr2[21]*argToInt((*I).args[2])+pwr2[16]*argToInt((*I).args[3]);
+                n=38+PWR2[11]*argToInt((*I).args[1])+PWR2[21]*argToInt((*I).args[2])+PWR2[16]*argToInt((*I).args[3]);
                 break;
             
             default:
-                n=2*pwr2[31]-1;
+                n=2*PWR2[31]-1;
                 break;
         }
     } else {
         switch (hash((*I).args[0])) {
             case 452401: //BGTZ
-                n=7*pwr2[26]+pwr2[21]*argToInt((*I).args[1])+argToInt((*I).args[2]);
+                n=7*PWR2[26]+PWR2[21]*argToInt((*I).args[1])+argToInt((*I).args[2]);
                 break;
             case 442391: //BLEZ
-                n=3*pwr2[27]+pwr2[21]*argToInt((*I).args[1])+argToInt((*I).args[2]);
+                n=3*PWR2[27]+PWR2[21]*argToInt((*I).args[1])+argToInt((*I).args[2]);
                 break;
             case 14407: //DIV (special)
-                n=26+pwr2[21]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2]);
+                n=26+PWR2[21]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2]);
                 break;
             case 9: //J
-                n=pwr2[27]+argToInt((*I).args[1]);
+                n=PWR2[27]+argToInt((*I).args[1]);
                 break;
             case 7445: //JAL
-                n=3*pwr2[26]+argToInt((*I).args[1]);
+                n=3*PWR2[26]+argToInt((*I).args[1]);
                 break;
             case 451: //JR (special)
-                n=8+argToInt((*I).args[1])*pwr2[21];
+                n=8+argToInt((*I).args[1])*PWR2[21];
                 break;
             case 5939: //LUI
-                n=15*pwr2[26]+pwr2[16]*argToInt((*I).args[1])+argToInt((*I).args[2]);
+                n=15*PWR2[26]+PWR2[16]*argToInt((*I).args[1])+argToInt((*I).args[2]);
                 break;
             case 145482: //MFHI (special)
-                n=16+pwr2[11]*argToInt((*I).args[1]);
+                n=16+PWR2[11]*argToInt((*I).args[1]);
                 break;
             case 253642: //MFLO (special)
-                n=18+pwr2[11]*argToInt((*I).args[1]);
+                n=18+PWR2[11]*argToInt((*I).args[1]);
                 break;
             case 341912: //MULT (special)
-                n=24+pwr2[21]*argToInt((*I).args[1])+pwr2[16]*argToInt((*I).args[2]);
+                n=24+PWR2[21]*argToInt((*I).args[1])+PWR2[16]*argToInt((*I).args[2]);
                 break;
             case 10517: //NOP (special)
                 n=0;
@@ -217,7 +214,7 @@ int instrToHexa(instruction* I) { // fonctionne pas avec les entiers négatifs
                 break;
 
             default:
-                n=2*pwr2[31]-1;
+                n=2*PWR2[31]-1;
                 break;
         }   
     }
@@ -230,7 +227,6 @@ void charFileToHexaFile(char fichierIN[], char fichierOUT[]) {
     progOUT pgmOUT;
     int n=lireFichier(fichierIN,&pgmIN);
     instruction I;
-    unsigned h;
     for (int i=0; i<n; i++) {
         initInstr(&I);
         sepLigneToInstr(pgmIN.line[i],&I);
@@ -242,7 +238,6 @@ void charFileToHexaFile(char fichierIN[], char fichierOUT[]) {
 void charPgmToHexaPgm(progIN* pgmIN, progOUT* pgmOUT, int n) {
     // idem mais sans l'écrire dans un fichier
     instruction I;
-    unsigned h;
     for (int i=0; i<n; i++) {
         initInstr(&I);
         sepLigneToInstr((*pgmIN).line[i],&I);

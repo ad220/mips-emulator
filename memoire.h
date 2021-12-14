@@ -1,6 +1,4 @@
-#include "header.h"
-
-#define TAILLE_PAGE 64 // 64 entiers --> 256 octets à adresser, sur un octet donc
+#include "conversionHexa.h"
 
 typedef struct page page;
 struct page {
@@ -12,6 +10,6 @@ struct page {
 typedef page* memoire;
 
 
-int lire(memoire* M, unsigned addr);
-void ecrire(memoire* M, unsigned addr, int x);
-page* allerPage(memoire* M, unsigned addr);
+int lire(memoire M, unsigned addr);
+void ecrire(memoire M, unsigned addr, int x);
+page* allerPage(memoire M, unsigned addr);

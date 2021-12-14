@@ -1,8 +1,8 @@
-#include "header.h"
+#include "memoire.h"
 
 typedef struct {
     int rgd[32];
-    int PC;
+    unsigned PC;
     int HI;
     int LO;
 } registre;
