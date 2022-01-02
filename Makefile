@@ -1,5 +1,5 @@
 all: emulateur.o memoire.o registre.o conversionHexa.o execution.o
-	gcc -o emulateur emulateur.o memoire.o registre.o conversionHexa.o execution.o
+	gcc -o emulateur emulateur.o memoire.o registre.o conversionHexa.o execution.o -lm
 
 conversionHexa.o: conversionHexa.c conversionHexa.h
 	gcc -c conversionHexa.c -Wall -pedantic -o conversionHexa.o
@@ -13,5 +13,5 @@ registre.o: registre.c registre.h
 execution.o: execution.c execution.h
 	gcc -c execution.c -Wall -pedantic -o execution.o
 
-emulateur.o: emulateur.c header.h
+emulateur.o: emulateur.c
 	gcc -c emulateur.c -Wall -pedantic -o emulateur.o

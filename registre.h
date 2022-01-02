@@ -7,6 +7,6 @@ typedef struct {
     int LO;
 } registre;
 
-void initProc(registre* R);
-int lireReg(registre* R, int i);
-void ecrireReg(registre* R, int i, int x);
+void initProc(registre* R); //met tous les registres à 0
+int lireReg(registre* R, int i); //renvoie la valeur du registre i
+void ecrireReg(registre* R, int i, int x); //écrit la valeur x dans le registre i

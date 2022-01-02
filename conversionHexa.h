@@ -19,7 +19,3 @@ typedef struct {
 int lireFichier(char nomFichier[], progIN* pgm);
 void ecrireFichier(char nomFichier[], progOUT* pgm, int n);
 void charPgmToHexaPgm(progIN* pgmIN, progOUT* pgmOUT, int n);
-
-int lireFichier(char nomFichier[], progIN* pgm);
-void ecrireFichier(char nomFichier[], progOUT* pgm, int n);
-void charPgmToHexaPgm(progIN* pgmIN, progOUT* pgmOUT, int n);

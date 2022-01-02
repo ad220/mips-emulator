@@ -1,0 +1,76 @@
+# Produit matriciel de matrices carrées de taille maximale 16x16 (ici 3x3)
+# Taille limitée à 16x16 par adresse de départ de matrices (superposition)
+# Pour changer de taille, changer la valeur des registres t0 et t4...
+#et charger plus de valeurs en mémoire
+ADDI $t0,$0,3 #taille des matrices
+ADDI $t4,$0,12 #taille des matrices * taille d'un élément
+ADDI $t1,$0,1024 #adresse 1er element 1ere matrice
+ADDI $t2,$0,1280 #adresse 1er element 2eme matrice
+ADDI $t3,$0,1536 #adresse 1er element 3eme matrice (resultat)
+#declaration matrice
+#1ere matrice
+ADDI $a0,$0,8 #1ere ligne
+SW $a0,0($t1)
+ADDI $a0,$0,1
+SW $a0,4($t1)
+ADDI $a0,$0,0
+SW $a0,8($t1)
+ADDI $a0,$0,0 #2eme ligne
+SW $a0,12($t1)
+ADDI $a0,$0,3
+SW $a0,16($t1)
+ADDI $a0,$0,9
+SW $a0,20($t1)
+ADDI $a0,$0,7 #3eme ligne
+SW $a0,24($t1)
+ADDI $a0,$0,0
+SW $a0,28($t1)
+ADDI $a0,$0,8
+SW $a0,32($t1)
+#2eme matrice
+ADDI $a0,$0,7 #1ere ligne
+SW $a0,0($t2)
+ADDI $a0,$0,8
+SW $a0,4($t2)
+ADDI $a0,$0,0
+SW $a0,8($t2)
+ADDI $a0,$0,0 #2eme ligne 
+SW $a0,12($t2)
+ADDI $a0,$0,6
+SW $a0,16($t2)
+ADDI $a0,$0,0
+SW $a0,20($t2)
+ADDI $a0,$0,2 #3eme ligne
+SW $a0,24($t2)
+ADDI $a0,$0,0
+SW $a0,28($t2)
+ADDI $a0,$0,6
+SW $a0,32($t2)
+#debut calculs
+ADDI $s1,$0,0 #compteur ligne
+MULT $t0,$t4
+MFLO $s0
+#branch ligne
+ADDI $s2,$0,0 #compteur colonne
+#branch colonne
+ADD $t5,$t1,$s1
+ADD $t6,$t2,$s2
+ADD $t7,$t3,$s1
+ADD $t7,$t7,$s2
+ADDI $a3,$0,0 #somme des multiplications
+ADDI $s3,$0,0 #compteur operation
+#branch op
+LW $a1,0($t5)
+LW $a2,0($t6)
+MULT $a1,$a2
+MFLO $a0
+ADD $a3,$a3,$a0
+ADDI $s3,$s3,4
+ADDI $t5,$t5,4
+ADD $t6,$t6,$t4
+BNE $s3,$t4,-9
+SW $a3,0($t7)
+ADDI $s2,$s2,4
+BNE $s2,$t4,-18
+ADD $s1,$s1,$t4
+BNE $s1,$s0,-21

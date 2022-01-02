@@ -15,9 +15,9 @@ void affichage(registre *R, memoire M,int lPgm) {
     printf("   LO:% -11d\n",R->LO);
 
     printf("\nEtat memoire :\n");
-    k=lPgm*4;
+    lPgm*=4;
+    k=lPgm%256;
     page* x=allerPage(M,lPgm);
-    page* y=x;
     int i;
     do {
         i=0;
@@ -30,12 +30,19 @@ void affichage(registre *R, memoire M,int lPgm) {
         k=0;
         x=x->suivant;
         printf("\n");
-    } while (x!=y);
-    printf("\n");
+    } while (x->n!=0);
 }
 
+int compStr(char C1[], char C2[]) {
+    int i=0;
+    while (C1[i]==C2[i] && C1[i]!='\0' && C2[i]!='\0') {i++;}
+    if (C1[i]==C2[i]) {i=1;}
+    else {i=0;}
+    return (i);
+}
 
 int main(int argc, char* argv[]) {
+    printf("\n==== Projet MIPS - Arthur DAVID & Alexandre BARRAL ====\n\n");
     page* p = (page* ) malloc(sizeof(page));
     memoire M=p;
     (*p).suivant=p;
@@ -45,17 +52,29 @@ int main(int argc, char* argv[]) {
     initProc(&reg);
 
     progIN pgmChar;
-    int lPgm=lireFichier("test1.mips",&pgmChar);
+    int lPgm=lireFichier(argv[1],&pgmChar);
     progOUT pgmHexa;
     charPgmToHexaPgm(&pgmChar,&pgmHexa,lPgm);
+    printf("Traduction du programme assembleur en instructions hexadecimales :\n");
+    for (int i=0; i<lPgm; i++) {
+        printf("0x%04X %08X (%s)\n",4*i,pgmHexa.line[i],pgmChar.line[i]);
+    }
+    printf("\n");
     pgmDansMemoire(&pgmHexa,M,lPgm);
     
+    int pas=(argc>2 && compStr("--pas",argv[2]));
     while(reg.PC!=lPgm*4) {
+        if (pas) {
+            getchar();
+            printf("\n=== Etat intermediaire ===\n");
+            affichage(&reg,M,lPgm);
+        }
+        printf("\n=== Instruction %08X (%s) ===\n\n",lire(M,reg.PC),pgmChar.line[reg.PC/4]);
         execLigne(M,&reg);
         reg.rgd[0]=0;
-        // affichage(&reg,M,lPgm);
         reg.PC+=4;
     }
+    printf("\n=== Etat final ===\n");
     affichage(&reg,M,lPgm);
     return(0);
 }

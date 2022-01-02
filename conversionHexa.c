@@ -6,9 +6,10 @@ unsigned PWR2[32]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,
     if (argc==3) {
         charFileToHexaFile(argv[1],argv[2]);
     } else {printf("error");}
+    // charFileToHexaFile("in4convRgd.txt","out4convRgd.txt");
     return(0);
-}
- */
+} */
+
 
 int lireFichier(char nomFichier[], progIN* pgm) {
     // lit le fichier "nomFichier" et l'écrit sous forme de tableau de chaînes de caractères dans pgm.
@@ -46,7 +47,7 @@ void initInstr(instruction* I) {
 void sepLigneToInstr(char ligne[], instruction* I) {
     // sépare une instruction assembleur sous forme de chaîne de caractère en tableau d'arguments.
     int n=0,i=0,j=0;
-    while (ligne[n]!='\0' && ligne[n]!='#') {
+    while (ligne[n]!='\0' && ligne[n]!='#' && ligne[n]!='\r') { // condition 'r' nécessaire sous UNIX : caractère retour à la ligne
         (*I).args[i][j]=ligne[n];
         j++;n++;
         if(ligne[n]==')') {n++;}
@@ -57,6 +58,7 @@ void sepLigneToInstr(char ligne[], instruction* I) {
             i++; j=0;
         }
     }
+    ligne[n]='\0';
 }
 
 int nbArgs(instruction* I) {

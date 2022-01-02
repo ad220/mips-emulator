@@ -14,7 +14,7 @@ void pgmDansMemoire(progOUT* pgm, memoire mem, int lPgm) {
     int i=0,j;
     page* p;
     while (i<lPgm) {
-        p=allerPage(mem,i);
+        p=allerPage(mem,i*4);
         j=0;
         while (j<64 && i<lPgm) {
             (*p).mot[j]=(*pgm).line[i];
@@ -52,15 +52,14 @@ void execLigne(memoire M, registre* R) {
                 }
                 break;
             case 2: //J
-                R->PC=4*arg(L,25,0)+(((R->PC+4)>>28)<<28); //branch delay slot ?
+                R->PC=4*arg(L,25,0)+(((R->PC+4)>>28)<<28)-4; //branch delay slot ?
                 break;
             case 3: //JAL
                 R->rgd[31]=R->PC+4; //branch delay slot ?? --> return adress après
-                R->PC=4*arg(L,25,0)+(((R->PC+4)>>28)<<28);
+                R->PC=4*arg(L,25,0)+(((R->PC+4)>>28)<<28)-4;
                 break;
             case 15: ;//LUI
-                unsigned of7LUI=argS(L,20,16);
-                R->rgd[arg(L,20,16)]=PWR2_2[16]*of7LUI;
+                R->rgd[arg(L,20,16)]=arg(L,16,0)<<16;
                 break;
             case 35: //LW
                 R->rgd[arg(L,20,16)]=lire(M,argS(L,15,0)+R->rgd[arg(L,25,21)]);
@@ -86,7 +85,7 @@ void execLigne(memoire M, registre* R) {
                 R->HI=R->rgd[arg(L,25,21)]%R->rgd[arg(L,20,16)];
                 break;
             case 8: //JR
-                R->PC=R->rgd[arg(L,25,21)];
+                R->PC=R->rgd[arg(L,25,21)]-4;
                 break;
             case 16: //MFHI
                 R->rgd[arg(L,15,11)]=R->HI;
@@ -105,7 +104,7 @@ void execLigne(memoire M, registre* R) {
             case 2:
                 if (arg(L,21,21)) { //ROTR
                     int saSRL=arg(L,10,6),rtSRL=arg(L,20,16);
-                    R->rgd[arg(L,15,11)]=(R->rgd[rtSRL]<<(31-saSRL))+(R->rgd[rtSRL]>>saSRL);
+                    R->rgd[arg(L,15,11)]=(R->rgd[rtSRL]<<(32-saSRL))+(R->rgd[rtSRL]>>saSRL);
                 } else { //SRL
                     R->rgd[arg(L,15,11)]=R->rgd[arg(L,20,16)]>>arg(L,10,6);
                 }
