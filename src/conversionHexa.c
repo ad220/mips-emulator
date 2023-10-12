@@ -1,4 +1,4 @@
-#include "conversionHexa.h"
+#include "../include/conversionHexa.h"
 
 unsigned PWR2[32]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432,67108864,134217728,268435456,536870912,1073741824,2147483648};
 
@@ -48,7 +48,7 @@ void sepLigneToInstr(char ligne[], instruction* I) {
     // sépare une instruction assembleur sous forme de chaîne de caractère en tableau d'arguments.
     int n=0,i=0,j=0;
     while (ligne[n]!='\0' && ligne[n]!='#' && ligne[n]!='\r') { // condition 'r' nécessaire sous UNIX : caractère retour à la ligne
-        (*I).args[i][j]=ligne[n];
+        (*I).args[i][j]=ligne[n]; //pas d'espace sur le premier caractère
         j++;n++;
         if(ligne[n]==')') {n++;}
         if (ligne[n]==' ' || ligne[n]==',' || ligne[n]=='(') {
@@ -95,9 +95,9 @@ unsigned argToInt(char R[]) {
     if (R[0]=='-') {i=1; p=1; s=-1;}
     else if (R[0]=='$') {
         n=idRgd(R);
-        if (n!=32) {
+        if (n!=32) { //succès de l'identification
             goto endArgToInt;
-        } else {
+        } else { //échec : doit être sous la forme $X, avec un X un entier naturel sinon ne fonctionne pas
             i=1; p=1; n=0;
         }
     }
@@ -118,7 +118,7 @@ unsigned argToInt(char R[]) {
 
 
 int hash(char op[9]) {
-    // bijection entre une chaine de caractère alphabétique et un entier.
+    // bijection entre une chaine de caractère alphabétique majuscule et un entier.
     int i=0,n=0;
     while (op[i]!=NULL) {n+=(op[i]-65)*pow(26,i); i++;}
     return(n);
@@ -173,6 +173,7 @@ int instrToHexa(instruction* I) { // fonctionne pas avec les entiers négatifs
                 break;
             
             default:
+                printf("Opcode inconnu :%s\n",(*I).args[0]);
                 n=2*PWR2[31]-1;
                 break;
         }
@@ -216,6 +217,7 @@ int instrToHexa(instruction* I) { // fonctionne pas avec les entiers négatifs
                 break;
 
             default:
+                printf("Opcode inconnu :%s\n",(*I).args[0]);
                 n=2*PWR2[31]-1;
                 break;
         }   

@@ -1,4 +1,4 @@
-#include "registre.h"
+#include "../include/registre.h"
 
 void initProc(registre* R) {
     for (int i=0; i<32; i++) {(*R).rgd[i]=0;}

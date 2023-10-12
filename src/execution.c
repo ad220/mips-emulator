@@ -1,4 +1,4 @@
-#include "execution.h"
+#include "../include/execution.h"
 
 unsigned PWR2_2[32]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432,67108864,134217728,268435456,536870912,1073741824,2147483648};
 
@@ -23,8 +23,8 @@ void pgmDansMemoire(progOUT* pgm, memoire mem, int lPgm) {
     }
 }
 
-void execLigne(memoire M, registre* R) {
-    unsigned L=lire(M,R->PC);
+void execLigne(memoire M, registre* R, unsigned instr) {
+    unsigned L=instr;
     int opcode=L/PWR2_2[26];
     if (opcode!=0) { // pas SPECIAL
         switch (opcode) {
@@ -34,23 +34,19 @@ void execLigne(memoire M, registre* R) {
             case 4: //BEQ
                 if (R->rgd[arg(L,20,16)]==R->rgd[arg(L,25,21)]) { //branch delay slot ??
                     R->PC+=4*argS(L,15,0);
-                }
-                break;
+                } break;
             case 7: //BGTZ
                 if (R->rgd[arg(L,25,21)]>R->rgd[0]) { //branch delay slot ??
                     R->PC+=4*argS(L,15,0);
-                }
-                break;
+                } break;
             case 6: //BLEZ
                 if (R->rgd[arg(L,25,21)]<=R->rgd[0]) { //branch delay slot ??
                     R->PC+=4*argS(L,15,0);
-                }
-                break;
+                } break;
             case 5: //BNE
                 if (R->rgd[arg(L,20,16)]!=R->rgd[arg(L,25,21)]) { //branch delay slot ??
                     R->PC+=4*argS(L,15,0);
-                }
-                break;
+                } break;
             case 2: //J
                 R->PC=4*arg(L,25,0)+(((R->PC+4)>>28)<<28)-4; //branch delay slot ?
                 break;
@@ -69,6 +65,7 @@ void execLigne(memoire M, registre* R) {
                 break;
             
             default:
+                printf("Opération inconnue à l'adresse mémoire 0x%04X",R->PC);
                 break;
         }
     } else { // SPECIAL
@@ -107,13 +104,11 @@ void execLigne(memoire M, registre* R) {
                     R->rgd[arg(L,15,11)]=(R->rgd[rtSRL]<<(32-saSRL))+(R->rgd[rtSRL]>>saSRL);
                 } else { //SRL
                     R->rgd[arg(L,15,11)]=R->rgd[arg(L,20,16)]>>arg(L,10,6);
-                }
-                break;
+                } break;
             case 0: //SLL & NOP
                 if (L!=0) {
                     R->rgd[arg(L,15,11)]=R->rgd[arg(L,20,16)]<<arg(L,10,6);
-                }
-                break;
+                } break;
             case 42: //SLT
                 R->rgd[arg(L,15,11)]=R->rgd[arg(L,25,21)]<R->rgd[arg(L,20,16)];
                 break;
@@ -127,6 +122,7 @@ void execLigne(memoire M, registre* R) {
                 break;
 
             default:
+                printf("Opération inconnue à l'adresse mémoire 0x%04X",R->PC);
                 break;
         }
     }

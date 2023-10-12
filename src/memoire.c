@@ -1,4 +1,4 @@
-#include "memoire.h"
+#include "../include/memoire.h"
 
 int lire(memoire M, unsigned addr) {
     page* pageAddr=allerPage(M,addr);
