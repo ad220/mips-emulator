@@ -1,6 +1,6 @@
 #include "../include/execution.h"
 
-void affichage(registre *R, memoire M,int lPgm) {
+void affichage(registre *R, memoire M) {
     printf("Etat registres :\n");
     unsigned k;
     for (int i=0; i<4; i++) {
@@ -15,9 +15,8 @@ void affichage(registre *R, memoire M,int lPgm) {
     printf("   LO:% -11d\n",R->LO);
 
     printf("\nEtat memoire :\n");
-    lPgm*=4;
-    k=lPgm%256;
-    page* x=allerPage(M,lPgm);
+    k=0;
+    page* x = M;
     int i;
     do {
         i=0;
@@ -70,7 +69,7 @@ int main(int argc, char* argv[]) {
             if (pas) {
                 getchar();
                 printf("\n=== Etat intermediaire ===\n");
-                affichage(&reg,M,lPgm);
+                affichage(&reg,M);
             }
             printf("\n=== Instruction %08X (%s) ===\n\n",lire(M,reg.PC),pgmChar.line[reg.PC/4]);
             execLigne(M,&reg,lire(M,reg.PC));
@@ -78,7 +77,6 @@ int main(int argc, char* argv[]) {
             reg.PC+=4;
         }
     } else { // mode interactif
-        lPgm=0;
         instruction I;
         unsigned instrHexa;
         char input[TAILLE_LIGNE_MAX];
@@ -91,13 +89,13 @@ int main(int argc, char* argv[]) {
             printf("\n=== Instruction %08X ===\n\n",instrHexa);
             execLigne(M,&reg,instrHexa);
             printf("\n=== Etat intermediaire ===\n");
-            affichage(&reg,M,lPgm);
+            affichage(&reg,M);
             for (int i=0; input[i]!='\0'; i++) {input[i]=NULL;}
             printf("> ");
             scanf(" %[^\n]",&input);
         } while (strComp(input,"exit")!=1);
     }
     printf("\n=== Etat final ===\n");
-    affichage(&reg,M,lPgm);
+    affichage(&reg,M);
     return(0);
 }
